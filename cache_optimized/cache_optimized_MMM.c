@@ -5,6 +5,7 @@
 #define N 1500
 #define K 1500
 #define M 1500
+#define block_size 500
 #define num_iterations 5
 
 void fill_matrix(int num_rows, int num_columns, double matrix[num_rows][num_columns]) {
@@ -17,10 +18,16 @@ void fill_matrix(int num_rows, int num_columns, double matrix[num_rows][num_colu
 }
 
 void multiply_matrix(int A_rows, int A_columns, int B_rows, int B_columns, double A[A_rows][A_columns], double B[B_rows][B_columns], double C[A_rows][B_columns]) {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < M; j++) {
-            for (int k = 0; k < K; k++) {
-                C[i][j] += A[i][k] * B[k][j];
+    for (int i = 0; i < N; i+=block_size) {
+        for (int j = 0; j < M; j+=block_size) {
+            for (int k = 0; k < K; k+=block_size) {
+                for (int i0 = i; i0 < (i + block_size); i0++) {
+                    for (int j0 = j; j0 < (j + block_size); j0++) {
+                        for (int k0 = k; k0 < (k + block_size); k0++) {
+                            C[i0][j0] += A[i0][k0] * B[k0][j0];
+                        }
+                    }
+                }
             }
         }
     }
